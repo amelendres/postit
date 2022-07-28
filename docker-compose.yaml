@@ -1,0 +1,39 @@
+version: '3.6'
+
+services:
+    pgsql:
+        container_name: appto-pgsql
+        image: postgres
+        restart: unless-stopped
+        ports:
+            - 5432:5432
+        networks:
+            - appto
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:-root}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+            POSTGRES_DB: ${POSTGRES_DB:-postit}
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - ./local/init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./var:/var/lib/postgresql/data
+            - ./var/run/postgresql:/var/run/postgresql
+
+   # rabbitmq:
+   #     container_name: devom-rabbitmq
+   #     image: 'rabbitmq:3.7-management'
+   #     restart: unless-stopped
+   #     ports:
+   #         - 5630:5672
+   #         - 15630:15672
+   #     env_file:
+   #         - ../.env
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+    appto:
+        #external: true
+        name: appto_net
